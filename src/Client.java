@@ -1,11 +1,15 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.security.PublicKey;
 import java.util.Scanner;
 
 public class Client {
 
     private Socket socket;
+    private BigInteger publicKey;
+    private BigInteger modulus;
 
     public void startClient() {
 
@@ -22,6 +26,7 @@ public class Client {
 
         try {
             this.socket = new Socket(host, port);
+            new Thread(new HeartBeat()).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,23 +38,32 @@ public class Client {
         BufferedWriter bw = null;
         try {
 
-            String message;
+            BufferedReader socketReader = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+
+            publicKey = new BigInteger(socketReader.readLine());
+            modulus = new BigInteger(socketReader.readLine());
+
             bw = new BufferedWriter(new OutputStreamWriter(
                     socket.getOutputStream(), Charset.forName("UTF-8")));
 
-            new Thread(new HeartBeat()).start();
-
+            String message, encrypted;
             while ((message = br.readLine()) != null) {
-                bw.write("#message#" + message);
+
+                encrypted = RSA.encrypt(message, publicKey, modulus);
+
+                bw.write("#message#" + encrypted);
                 bw.newLine();
                 bw.flush();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }  finally {
             try {
-                bw.close();
+                if (bw != null) {
+                    bw.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

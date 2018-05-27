@@ -1,4 +1,5 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
@@ -10,10 +11,13 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private SocketAddress sAddress;
     private long lastTimeAlive;
+    private BigInteger privateKey, modulus;
 
     public ClientHandler(Socket socket) {
         clientSocket = socket;
         sAddress = socket.getRemoteSocketAddress();
+        privateKey = new BigInteger(Server.privateKey);
+        modulus = new BigInteger(Server.modulus);
     }
 
 
@@ -26,20 +30,29 @@ public class ClientHandler implements Runnable {
                     clientSocket.getInputStream(), Charset.forName("UTF-8"))
             );
 
-            BufferedWriter bufferedWriter = new BufferedWriter(
-                    new OutputStreamWriter(clientSocket.getOutputStream())
-            );
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            bw.write(Server.publicKey);
+            bw.newLine();
+            bw.flush();
+            System.out.println(Server.publicKey);
+
+            bw.write(Server.modulus);
+            bw.newLine();
+            bw.flush();
 
             lastTimeAlive = System.currentTimeMillis();
             new Thread(new HeartBeatChecker()).start();
 
-            String message;
+            String message, decrypted;
             while ((message = bufferedReader.readLine()) != null) {
                 lastTimeAlive = System.currentTimeMillis();
 
                 if (message.startsWith("#message#")) {
+
                     message = message.replace("#message#", "");
-                    System.out.println(message);
+                    decrypted = RSA.decrypt(message, privateKey, modulus);
+
+                    System.out.println("Decrypted: " + decrypted);
                 }
             }
 
