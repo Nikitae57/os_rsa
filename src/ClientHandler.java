@@ -34,7 +34,6 @@ public class ClientHandler implements Runnable {
             bw.write(Server.publicKey);
             bw.newLine();
             bw.flush();
-            System.out.println(Server.publicKey);
 
             bw.write(Server.modulus);
             bw.newLine();
@@ -50,9 +49,10 @@ public class ClientHandler implements Runnable {
                 if (message.startsWith("#message#")) {
 
                     message = message.replace("#message#", "");
-                    decrypted = RSA.decrypt(message, privateKey, modulus);
+                    System.out.println("\nEncrypted: " + message + '\n');
 
-                    System.out.println("Decrypted: " + decrypted);
+                    decrypted = RSA.decrypt(message, privateKey, modulus);
+                    System.out.println("\nDecrypted: " + decrypted + '\n');
                 }
             }
 

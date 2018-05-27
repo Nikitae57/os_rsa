@@ -51,6 +51,7 @@ public class Client {
             while ((message = br.readLine()) != null) {
 
                 encrypted = RSA.encrypt(message, publicKey, modulus);
+                System.out.println("\nEncrypted: " + encrypted + '\n');
 
                 bw.write("#message#" + encrypted);
                 bw.newLine();
