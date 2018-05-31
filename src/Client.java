@@ -45,7 +45,7 @@ public class Client {
             modulus = new BigInteger(socketReader.readLine());
 
             bw = new BufferedWriter(new OutputStreamWriter(
-                    socket.getOutputStream(), Charset.forName("UTF-8")));
+                    socket.getOutputStream()));
 
             String message, encrypted;
             while ((message = br.readLine()) != null) {
