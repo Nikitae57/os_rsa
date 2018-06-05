@@ -42,7 +42,6 @@ public class ClientHandler implements Runnable {
             lastTimeAlive = System.currentTimeMillis();
             new Thread(new HeartBeatChecker()).start();
 
-            StringBuilder sb;
             String message, decrypted;
             while ((message = bufferedReader.readLine()) != null) {
                 lastTimeAlive = System.currentTimeMillis();
@@ -53,9 +52,7 @@ public class ClientHandler implements Runnable {
                     System.out.println("\nEncrypted: " + message + '\n');
 
                     decrypted = RSA.decrypt(message, privateKey, modulus);
-                    sb = new StringBuilder(decrypted);
-                    sb.deleteCharAt(0);
-                    System.out.println("\nDecrypted: " + sb + '\n');
+                    System.out.println("\nDecrypted: " + decrypted + '\n');
                 }
             }
 
