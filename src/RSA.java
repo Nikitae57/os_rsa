@@ -5,7 +5,7 @@ public class RSA {
 
     public static void main(String[] args) {
         RSA rsa = new RSA();
-        String enc = rsa.encrypt("HEllo, world!",
+        String enc = rsa.encrypt("",
                 new BigInteger(rsa.getPublicExponent()),
                 new BigInteger(rsa.getModulus()));
 
@@ -64,4 +64,6 @@ public class RSA {
         BigInteger decr = (new BigInteger(text)).modPow(privateExponent, modulus);
         return new String(decr.toByteArray());
     }
+
+
 }

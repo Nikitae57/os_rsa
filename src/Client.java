@@ -50,6 +50,7 @@ public class Client {
             String message, encrypted;
             while ((message = br.readLine()) != null) {
 
+                message = 'a' + message;
                 encrypted = RSA.encrypt(message, publicKey, modulus);
                 System.out.println("\nEncrypted: " + encrypted + '\n');
 
